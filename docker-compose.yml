@@ -1,0 +1,42 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+     - 3000:3000
+    volumes:
+     - grafana-storage:/var/lib/grafana
+    networks:
+      - obs
+  golang:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: golang
+    restart: always
+    networks:
+      - obs
+    ports:
+     - 9000:9000
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+     - ./prometheus:/etc/prometheus/
+     - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+     - 9090:9090
+    restart: always
+    networks:
+     - obs
+
+volumes:
+  grafana-storage:
+  prometheus_data:
+
+networks:
+  obs:
