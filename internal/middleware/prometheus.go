@@ -3,9 +3,9 @@ package middleware
 import (
 	"net/http"
 	"strconv"
-
-	"github.com/Dev79844/observeability-poc/metrics"
 	"time"
+
+    "github.com/Dev79844/observeability-poc/internal/metrics"
 )
 
 func PrometheusMiddleware(next http.Handler) http.Handler {

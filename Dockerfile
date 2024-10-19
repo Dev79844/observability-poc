@@ -4,6 +4,6 @@ RUN export GO111MODULE=on
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o main .
+RUN go build -o main cmd/main.go
 EXPOSE 9000
 CMD ["./main"]

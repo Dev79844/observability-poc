@@ -5,10 +5,10 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Dev79844/observeability-poc/metrics"
-	"github.com/Dev79844/observeability-poc/middleware"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/Dev79844/observeability-poc/internal/metrics"
+	"github.com/Dev79844/observeability-poc/internal/middleware"
 )
 
 type responseWriter struct{
@@ -32,7 +32,6 @@ func main(){
 	router.Use(middleware.PrometheusMiddleware)
 
 	router.Path("/metrics").Handler(promhttp.Handler())
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	slog.Info("server started on port 9000")
 	err := http.ListenAndServe(":9000", router)
