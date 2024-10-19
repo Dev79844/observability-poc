@@ -9,24 +9,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/Dev79844/observeability-poc/internal/metrics"
 	"github.com/Dev79844/observeability-poc/internal/middleware"
+	"github.com/Dev79844/observeability-poc/internal/db"
 )
 
-type responseWriter struct{
-	http.ResponseWriter
-	statusCode int
-}
-
-func NewResponseWriter(w http.ResponseWriter) *responseWriter {
-	return &responseWriter{w, http.StatusOK}
-}
-
-func (rw *responseWriter) WriteHeader(code int){
-	rw.statusCode = code
-	rw.ResponseWriter.WriteHeader(code)
-}
-
 func main(){
-	metrics.InitMetrics()
+	database := db.InitDB()
+	defer database.Close()
+	metrics.InitMetrics(database.Pool)
 	router := mux.NewRouter()
 	router.Use(middleware.LoggingMiddleware)
 	router.Use(middleware.PrometheusMiddleware)
