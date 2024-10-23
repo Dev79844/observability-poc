@@ -34,6 +34,17 @@ var(
 		},
 		[]string{"path", "method", "status_code"},
 	)
+
+    DBQueryDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
+        Name: "db_query_duration_seconds",
+        Help: "Duration of database queries.",
+        Buckets: []float64{.001, .005, .01, .025, .05, .1, .25, .5, 1},
+    }, []string{"query"})
+
+    DBErrors = promauto.NewCounterVec(prometheus.CounterOpts{
+        Name: "db_errors",
+        Help: "Count of errors in db",
+    }, []string{"query"})
 )
 
 type DBStatsCollector struct {
@@ -46,6 +57,10 @@ type DBStatsCollector struct {
     maxConns         	*prometheus.Desc
     totalConns       	*prometheus.Desc
     pool             	interface{ Stat() *pgxpool.Stat }
+}
+
+func NewDBTimer(metric string) *prometheus.Timer {
+    return prometheus.NewTimer(DBQueryDuration.WithLabelValues(metric))
 }
 
 func NewDBStatsCollector(pool interface{ Stat() *pgxpool.Stat }) *DBStatsCollector {

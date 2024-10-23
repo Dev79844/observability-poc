@@ -5,11 +5,11 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/Dev79844/observeability-poc/internal/api"
+	"github.com/Dev79844/observeability-poc/internal/db"
+	"github.com/Dev79844/observeability-poc/internal/metrics"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/Dev79844/observeability-poc/internal/metrics"
-	"github.com/Dev79844/observeability-poc/internal/middleware"
-	"github.com/Dev79844/observeability-poc/internal/db"
 )
 
 func main(){
@@ -17,9 +17,7 @@ func main(){
 	defer database.Close()
 	metrics.InitMetrics(database.Pool)
 	router := mux.NewRouter()
-	router.Use(middleware.LoggingMiddleware)
-	router.Use(middleware.PrometheusMiddleware)
-
+	api.SetApiRoutes(router, database)
 	router.Path("/metrics").Handler(promhttp.Handler())
 
 	slog.Info("server started on port 9000")

@@ -33,7 +33,7 @@ services:
     depends_on:
      - db
     environment:
-     - DB_URI=postgres://db:root@password/test
+     - DB_URI=postgres://root:password@db/test
   prometheus:
     image: prom/prometheus:latest
     volumes:
