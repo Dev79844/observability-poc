@@ -25,6 +25,11 @@ Clone the repo
   git clone https://github.com/Dev79844/observability-poc.git
 ```
 
+Change directory:
+```bash
+  cd observability-poc
+```
+
 Start the application using docker compose
 
 ```bash
